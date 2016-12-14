@@ -1,0 +1,3 @@
+[submodule "connectors/kafka-connect-irc"]
+	path = connectors/kafka-connect-irc
+	url = https://github.com/cjmatta/kafka-connect-irc

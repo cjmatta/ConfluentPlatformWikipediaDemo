@@ -17,16 +17,22 @@ services:
         - "9092:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_DELETE_TOPIC_ENABLE: "true"
   connect:
-    image: cmatta/wikiconnecthost:latest
+    # image: cmatta/wikiconnecthost:latest
+    image: confluentinc/cp-kafka-connect:latest
     restart: always
     ports:
       - "8083:8083"
     depends_on:
       - zookeeper
       - kafka
+      - schemaregistry
+    volumes:
+      # add volumes here
+      - ./connectors/kafka-connect-irc/target/kafka-connect-irc-1.0-SNAPSHOT-package/etc/kafka-connect-irc:/etc/kafka-connect-irc
+      - ./connectors/kafka-connect-irc/target/kafka-connect-irc-1.0-SNAPSHOT-package/share/java/kafka-connect-irc:/usr/share/java/kafka-connect-irc
     environment:
       CONNECT_BOOTSTRAP_SERVERS: kafka:9092
       CONNECT_REST_PORT: 8083
@@ -42,7 +48,7 @@ services:
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-      CONNECT_REST_ADVERTISED_HOST_NAME: "localhost"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "connect"
       CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
   elasticsearch:
     image: library/elasticsearch:latest
@@ -69,9 +75,9 @@ services:
     ports:
       - "9021:9021"
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: "192.168.1.20:9092"
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: "kafka:9092"
       CONTROL_CENTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      CONTROL_CENTER_REPLICATION_FACTOR: 2
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS: 2
       CONTROL_CENTER_CONNECT_CLUSTER: "connect:8083"
       CONTROL_CENTER_STREAMS_CONSUMER_REQUEST_TIMEOUT_MS: "960032"
