@@ -20,8 +20,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_DELETE_TOPIC_ENABLE: "true"
   connect:
-    # image: cmatta/wikiconnecthost:latest
-    image: confluentinc/cp-kafka-connect:latest
+    image: cmatta/wikipediademoconnect:latest
     restart: always
     ports:
       - "8083:8083"
@@ -29,10 +28,6 @@ services:
       - zookeeper
       - kafka
       - schemaregistry
-    volumes:
-      # add volumes here
-      - ./connectors/kafka-connect-irc/target/kafka-connect-irc-1.0-SNAPSHOT-package/etc/kafka-connect-irc:/etc/kafka-connect-irc
-      - ./connectors/kafka-connect-irc/target/kafka-connect-irc-1.0-SNAPSHOT-package/share/java/kafka-connect-irc:/usr/share/java/kafka-connect-irc
     environment:
       CONNECT_BOOTSTRAP_SERVERS: kafka:9092
       CONNECT_REST_PORT: 8083
@@ -92,3 +87,9 @@ services:
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     ports:
       - 8081:8081
+  wikipediachangesmonitor:
+      image: cmatta/wikipediachangesmonitor:latest
+      depends_on:
+          - kafka
+          - schemaregistry
+          - connect
