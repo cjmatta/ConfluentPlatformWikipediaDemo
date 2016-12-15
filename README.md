@@ -20,3 +20,4 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 6. To tell Elasticsearch what the data looks like run `./scripts/set_elasticsearch_mapping.sh`
 7. Start the Elasticsearch sink: `./scripts/submit_elastic_sink_config.sh`
 8. Open Kibana [http://localhost:5601/](http://localhost:5601/)
+9. Check back in with Control Center to see status on messages produced/consumed
