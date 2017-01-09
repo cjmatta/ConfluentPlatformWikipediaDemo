@@ -3,6 +3,7 @@ Demo streaming pipeline built around the Confluent platform, uses the following:
 
 * [Kafka Connect](http://docs.confluent.io/3.1.1/connect/index.html)
 * [Kafka Streams](http://docs.confluent.io/3.1.1/streams/index.html)
+* [Confluent Schema Registry](http://docs.confluent.io/3.1.1/schema-registry/docs/index.html)
 * Conflulent Control Center
 * [kafka-connect-irc source connector](https://github.com/cjmatta/kafka-connect-irc)
 * [kafka-connect-elasticsearch sink connectors](http://docs.confluent.io/3.1.1/connect/connect-elasticsearch/docs/elasticsearch_connector.html)
