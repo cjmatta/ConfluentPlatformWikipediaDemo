@@ -23,3 +23,15 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 7. Start the Elasticsearch sink: `./scripts/submit_elastic_sink_config.sh`
 8. Open Kibana [http://localhost:5601/](http://localhost:5601/)
 9. Check back in with Control Center to see status on messages produced/consumed
+
+#### Kibana Dashbaord
+To load the included dashboard into Kibana:
+1. Open Kibana [http://localhost:5601](http://localhost:5601)
+2. Navigate to the management tab (gear icon) and click on "Index Patterns"
+3. Configure an index pattern: specify "wikipedia.parsed" in the pattern box and ensure that "Time-field name" reads `createdat`
+4. Click "Create"
+5. Navigate to the "Advanced Settings" tab and set the following:
+    - *timelion:es.timefield*: `createdat`
+    - *timelion:es.default_index*: `wikipedia.parsed`
+6. Navigate to the "Saved Objects" tab and click `import` and load the `kibana_dash.json` file.
+7. Navigate to the Dashboard tab (compass icon) and click open -> "Wikipedia"
