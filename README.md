@@ -24,7 +24,7 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 8. Open Kibana [http://localhost:5601/](http://localhost:5601/)
 9. Check back in with Control Center to see status on messages produced/consumed
 
-#### Kibana Dashbaord
+#### Kibana Dashboard
 To load the included dashboard into Kibana:
 
 1. Open Kibana [http://localhost:5601](http://localhost:5601)
