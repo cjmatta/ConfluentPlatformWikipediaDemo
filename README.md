@@ -1,13 +1,13 @@
 ### Confluent Platform Wikipedia Demo
 Demo streaming pipeline built around the Confluent platform, uses the following:
 
-* Kafka Connect
-* Kafka Streams
+* [Kafka Connect](http://docs.confluent.io/3.1.1/connect/index.html)
+* [Kafka Streams](http://docs.confluent.io/3.1.1/streams/index.html)
 * Conflulent Control Center
-* kafka-connect-irc source connector
-* kafka-connect-elasticsearch sink connectors
-* Elasticsearch
-* Kibana
+* [kafka-connect-irc source connector](https://github.com/cjmatta/kafka-connect-irc)
+* [kafka-connect-elasticsearch sink connectors](http://docs.confluent.io/3.1.1/connect/connect-elasticsearch/docs/elasticsearch_connector.html)
+* [Elasticsearch](https://www.elastic.co/products/elasticsearch)
+* [Kibana](https://www.elastic.co/products/kibana)
 
 This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and #en.wiktionary and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Streams app [WikipediaChangesMonitor](https://github.com/cjmatta/WikipediaChangesMonitor) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
 
