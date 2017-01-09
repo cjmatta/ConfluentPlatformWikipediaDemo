@@ -32,7 +32,7 @@ To load the included dashboard into Kibana:
 3. Configure an index pattern: specify "wikipedia.parsed" in the pattern box and ensure that "Time-field name" reads `createdat`
 4. Click "Create"
 5. Navigate to the "Advanced Settings" tab and set the following:
-    - *timelion:es.timefield*: `createdat`
-    - *timelion:es.default_index*: `wikipedia.parsed`
+    - **timelion:es.timefield**: `createdat`
+    - **timelion:es.default_index**: `wikipedia.parsed`
 6. Navigate to the "Saved Objects" tab and click `import` and load the `kibana_dash.json` file.
 7. Navigate to the Dashboard tab (compass icon) and click open -> "Wikipedia"
