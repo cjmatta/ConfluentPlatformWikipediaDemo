@@ -26,6 +26,7 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 
 #### Kibana Dashbaord
 To load the included dashboard into Kibana:
+
 1. Open Kibana [http://localhost:5601](http://localhost:5601)
 2. Navigate to the management tab (gear icon) and click on "Index Patterns"
 3. Configure an index pattern: specify "wikipedia.parsed" in the pattern box and ensure that "Time-field name" reads `createdat`
