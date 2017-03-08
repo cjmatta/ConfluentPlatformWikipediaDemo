@@ -36,7 +36,7 @@ To load the included dashboard into Kibana:
     - **timelion:es.timefield**: `createdat`
     - **timelion:es.default_index**: `wikipedia.parsed`
 6. Navigate to the "Saved Objects" tab and click `import` and load the `kibana_dash.json` file.
-7. Navigate to the Dashboard tab (compass icon) and click open -> "Wikipedia"
+7. Navigate to the Dashboard tab (speedometer icon) and click open -> "Wikipedia"
 
 #### Teardown and stopping
 Running `reset_demo.sh` will stop and destroy all components and clear all volumes from Docker.
