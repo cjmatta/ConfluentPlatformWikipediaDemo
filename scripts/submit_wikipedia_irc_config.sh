@@ -15,7 +15,7 @@ DATA=$( cat << EOF
       "connector.class": "org.cmatta.kafka.connect.irc.IrcSourceConnector",
       "irc.server": "irc.wikimedia.org",
       "kafka.topic": "wikipedia.raw",
-      "irc.channels": "#en.wikipedia,#en.wiktionary",
+      "irc.channels": "#en.wikipedia,#en.wiktionary,#en.wikibooks,#en.wikinews,#es.wikipedia,#fr.wikipedia",
       "tasks.max": "2"
   }
 }

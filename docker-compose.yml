@@ -1,7 +1,7 @@
 version: "2"
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:3.2.0_SNAPSHOT-1
+    image: confluentinc/cp-zookeeper:latest
     restart: always
     environment:
       ZOOKEEPER_SERVER_ID: 1
@@ -9,7 +9,7 @@ services:
       ZOOKEEPER_TICK_TIME: "2000"
       ZOOKEEPER_SERVERS: "zookeeper:22888:23888"
   kafka:
-    image: confluentinc/cp-enterprise-kafka:3.2.0_SNAPSHOT-1
+    image: confluentinc/cp-enterprise-kafka:latest
     restart: always
     depends_on:
       - zookeeper
@@ -19,12 +19,12 @@ services:
       KAFKA_DELETE_TOPIC_ENABLE: "true"
       KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
       KAFKA_BROKER_ID: 1
-      KAFKA_CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "kafka:9092"
-      KAFKA_CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
-      KAFKA_CONFLUENT_METRICS_REPORTER_MAX_REQUEST_SIZE: 10485760
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_REPORTER_MAX_REQUEST_SIZE: 10485760
   connect:
-    image: cmatta/wikipediademoconnect:3.2.0_SNAPSHOT-1
+    image: cmatta/wikipediademoconnect:latest
     restart: always
     ports:
       - "8083:8083"
@@ -66,7 +66,7 @@ services:
     ports:
       - "5601:5601"
   control_center:
-    image: confluentinc/cp-enterprise-control-center:3.2.0_SNAPSHOT-1
+    image: confluentinc/cp-enterprise-control-center:latest
     restart: always
     depends_on:
       - zookeeper
@@ -82,7 +82,7 @@ services:
       CONTROL_CENTER_CONNECT_CLUSTER: "connect:8083"
       CONTROL_CENTER_STREAMS_CONSUMER_REQUEST_TIMEOUT_MS: "960032"
   schemaregistry:
-    image: confluentinc/cp-schema-registry:3.2.0_SNAPSHOT-1
+    image: confluentinc/cp-schema-registry:latest
     restart: always
     depends_on:
       - zookeeper
@@ -93,7 +93,7 @@ services:
     ports:
       - 8081:8081
   wikipediachangesmonitor:
-      image: cmatta/wikipediachangesmonitor:3.2.0_SNAPSHOT-1
+      image: cmatta/wikipediachangesmonitor:latest
       environment:
           CHANGESMONITOR_BOOTSTRAP_SERVERS: "kafka:9092"
           CHANGESMONITOR_ZOOKEEPER_CONFIG: "zookeeper:2181"

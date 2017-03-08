@@ -4,9 +4,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
 
 echo "Starting Zookeeper and Kafka"
 echo
-docker-compose up -d zookeeper kafka-1 kafka-2
+docker-compose up -d zookeeper kafka
 
-sleep 15
+sleep 20
 
 $DIR/scripts/create_wikipedia_topics.sh
 

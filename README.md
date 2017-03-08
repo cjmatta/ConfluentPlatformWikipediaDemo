@@ -15,8 +15,8 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 ![Demo Drawing](https://cjmatta.github.io/ConfluentPlatformWikipediaDemo/drawing.png)
 
 ### Getting started
-1. Run `docker-compose up` from the root of the project
-2. Once everything is up and stable open [http://localhost:9021](http://localhost:9021) and you should see Control Center (no graphs yet!)
+1. Run `./start_demo.sh` from the root of the project, this will start the components and create the topics
+2. Once everything is up and stable open [http://localhost:9021](http://localhost:9021) and you should see Control Center
 3. To start streaming from IRC run `./scripts/submit_wikipedia_irc_config.sh`
 4. Run `./scripts/listen_wikipedia.raw.sh` to watch the live messages from the `wikipedia.raw` topic
 5. Run `./scripts/listen_wikipedia.parsed.sh` to watch the live messages from the `wikipedia.parsed` topic
@@ -37,3 +37,6 @@ To load the included dashboard into Kibana:
     - **timelion:es.default_index**: `wikipedia.parsed`
 6. Navigate to the "Saved Objects" tab and click `import` and load the `kibana_dash.json` file.
 7. Navigate to the Dashboard tab (compass icon) and click open -> "Wikipedia"
+
+#### Teardown and stopping
+Running `reset_demo.sh` will stop and destroy all components and clear all volumes from Docker.
