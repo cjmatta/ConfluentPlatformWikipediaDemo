@@ -11,12 +11,15 @@ DATA=$( cat << EOF
 {
   "name": "wikipedia-irc",
   "config": {
-      "producer.interceptor.classes": "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor",
-      "connector.class": "org.cmatta.kafka.connect.irc.IrcSourceConnector",
-      "irc.server": "irc.wikimedia.org",
-      "kafka.topic": "wikipedia.raw",
-      "irc.channels": "#en.wikipedia,#en.wiktionary,#en.wikibooks,#en.wikinews,#es.wikipedia,#fr.wikipedia",
-      "tasks.max": "2"
+    "connector.class": "com.github.cjmatta.kafka.connect.irc.IrcSourceConnector",
+    "name": "w",
+    "transforms": "WikiEditTransformation",
+    "transforms.WikiEditTransformation.type": "com.github.cjmatta.kafka.connect.transform.wikiedit.WikiEditTransformation",
+    "irc.channels": "#en.wikipedia",
+    "irc.server": "irc.wikimedia.org",
+    "kafka.topic": "wikipedia.parsed"
+    "producer.interceptor.classes": "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor",
+    "tasks.max": "1"
   }
 }
 EOF
