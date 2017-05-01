@@ -14,5 +14,5 @@ echo "Waiting for startup..."
 sleep 15
 
 echo "Starting Connect, Schema Registry, Control Center, Streams App, Kibana and Elasticsearch"
-docker-compose up -d wikipediachangesmonitor kibana control_center
+docker-compose up -d connect kibana control_center
 

@@ -17,7 +17,7 @@ DATA=$( cat << EOF
     "transforms.WikiEditTransformation.type": "com.github.cjmatta.kafka.connect.transform.wikiedit.WikiEditTransformation",
     "irc.channels": "#en.wikipedia",
     "irc.server": "irc.wikimedia.org",
-    "kafka.topic": "wikipedia.parsed"
+    "kafka.topic": "wikipedia.parsed",
     "producer.interceptor.classes": "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor",
     "tasks.max": "1"
   }
