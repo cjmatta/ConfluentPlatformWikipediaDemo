@@ -11,3 +11,7 @@ docker run --rm --network ${DOCKER_PROJECT}_default confluentinc/cp-kafka:latest
 
 docker run --rm --network ${DOCKER_PROJECT}_default confluentinc/cp-kafka:latest \
     kafka-topics --zookeeper zookeeper:2181 --topic wikipedia.parsed --create --replication-factor 1 --partitions 6
+
+docker run --rm --network ${DOCKER_PROJECT}_default confluentinc/cp-kafka:latest \
+    kafka-topics --zookeeper zookeeper:2181 --topic wikipedia.failed --create --replication-factor 1 --partitions 6
+

@@ -24,7 +24,7 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_REPORTER_MAX_REQUEST_SIZE: 10485760
   connect:
-    image: cmatta/wikipediademoconnect:latest
+    image: cmatta/wikipediademoconnect:transformer
     restart: always
     ports:
       - "8083:8083"
@@ -92,12 +92,3 @@ services:
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     ports:
       - 8081:8081
-  wikipediachangesmonitor:
-      image: cmatta/wikipediachangesmonitor:latest
-      environment:
-          CHANGESMONITOR_BOOTSTRAP_SERVERS: "kafka:9092"
-          CHANGESMONITOR_SCHEMA_REGISTRY_URL: "http://schemaregistry:8081"
-      depends_on:
-          - kafka
-          - schemaregistry
-          - connect
