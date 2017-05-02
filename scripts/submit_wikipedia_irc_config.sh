@@ -12,7 +12,6 @@ DATA=$( cat << EOF
   "name": "wikipedia-irc",
   "config": {
     "connector.class": "com.github.cjmatta.kafka.connect.irc.IrcSourceConnector",
-    "name": "w",
     "transforms": "WikiEditTransformation",
     "transforms.WikiEditTransformation.type": "com.github.cjmatta.kafka.connect.transform.wikiedit.WikiEditTransformation",
     "irc.channels": "#en.wikipedia",
