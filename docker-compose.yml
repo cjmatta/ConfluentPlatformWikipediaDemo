@@ -96,7 +96,7 @@ services:
       image: cmatta/wikipediachangesmonitor:latest
       environment:
           CHANGESMONITOR_BOOTSTRAP_SERVERS: "kafka:9092"
-          CHANGESMONITOR_ZOOKEEPER_CONFIG: "zookeeper:2181"
+          CHANGESMONITOR_SCHEMA_REGISTRY_URL: "http://schemaregistry:8081"
       depends_on:
           - kafka
           - schemaregistry
