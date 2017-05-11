@@ -14,6 +14,8 @@ DATA=$( cat << EOF
     "connector.class": "com.github.cjmatta.kafka.connect.irc.IrcSourceConnector",
     "transforms": "WikiEditTransformation",
     "transforms.WikiEditTransformation.type": "com.github.cjmatta.kafka.connect.transform.wikiedit.WikiEditTransformation",
+    "transforms.wikiEditTransformation.save.unparseable.messages": true,
+    "transforms.wikiEditTransformation.dead.letter.topic": "wikipedia.failed",
     "irc.channels": "#en.wikipedia",
     "irc.server": "irc.wikimedia.org",
     "kafka.topic": "wikipedia.parsed",
