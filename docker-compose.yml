@@ -1,7 +1,7 @@
 version: "2"
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:3.2.1
+    image: confluentinc/cp-zookeeper:3.3.0
     restart: always
     environment:
       ZOOKEEPER_SERVER_ID: 1
@@ -9,10 +9,12 @@ services:
       ZOOKEEPER_TICK_TIME: "2000"
       ZOOKEEPER_SERVERS: "zookeeper:22888:23888"
   kafka:
-    image: confluentinc/cp-enterprise-kafka:3.2.1
+    image: confluentinc/cp-enterprise-kafka:3.3.0
     restart: always
     depends_on:
       - zookeeper
+    ports:
+      - "9092:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
@@ -24,7 +26,7 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_REPORTER_MAX_REQUEST_SIZE: 10485760
   connect:
-    image: cmatta/wikipediademoconnect:transformer
+    image: confluentinc/cp-kafka-connect:3.3.0
     restart: always
     ports:
       - "8083:8083"
@@ -32,6 +34,8 @@ services:
       - zookeeper
       - kafka
       - schemaregistry
+    volumes:
+      - ./connect-plugins:/usr/share/java/connect-plugins
     environment:
       CONNECT_BOOTSTRAP_SERVERS: kafka:9092
       CONNECT_REST_PORT: 8083
@@ -49,7 +53,13 @@ services:
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
       CONNECT_REST_ADVERTISED_HOST_NAME: "connect"
       CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
-      CONNECT_REPLICATION_FACTOR: 1
+      CONNECT_CONFIG_STORAGE_TOPIC: connect-config
+      CONNECT_OFFSET_STORAGE_TOPIC: connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_PLUGIN_PATH: /usr/share/java/connect-plugins
   elasticsearch:
     image: library/elasticsearch:latest
     restart: always
@@ -65,8 +75,8 @@ services:
       - elasticsearch
     ports:
       - "5601:5601"
-  control_center:
-    image: confluentinc/cp-enterprise-control-center:latest
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:3.3.0
     restart: always
     depends_on:
       - zookeeper
@@ -82,7 +92,7 @@ services:
       CONTROL_CENTER_CONNECT_CLUSTER: "connect:8083"
       CONTROL_CENTER_STREAMS_CONSUMER_REQUEST_TIMEOUT_MS: "960032"
   schemaregistry:
-    image: confluentinc/cp-schema-registry:3.2.1
+    image: confluentinc/cp-schema-registry:3.3.0
     restart: always
     depends_on:
       - zookeeper
@@ -92,3 +102,25 @@ services:
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     ports:
       - 8081:8081
+  kafka-create-topics:
+    image: confluentinc/cp-enterprise-kafka:3.3.0
+    depends_on:
+      - kafka
+    hostname: kafka-create-topics
+    # We defined a dependency on "kafka", but `depends_on` will NOT wait for the
+    # dependencies to be "ready" before starting the "kafka-create-topics"
+    # container;  it waits only until the dependencies have started.  Hence we
+    # must control startup order more explicitly.
+    # See https://docs.docker.com/compose/startup-order/
+    command: "bash -c 'echo Waiting for Kafka to be ready... && \
+                       cub kafka-ready -b kafka:9092 1 60 && \
+                       kafka-topics --zookeeper zookeeper:2181 --topic wikipedia.raw --create --replication-factor 1 --partitions 6 && \
+                       kafka-topics --zookeeper zookeeper:2181 --topic wikipedia.parsed --create --replication-factor 1 --partitions 6 && \
+                       exit'"
+    environment:
+      # The following settings are listed here only to satisfy the image's requirements.
+      # We override the image's `command` anyways, hence this container will not start a broker.
+      KAFKA_BROKER_ID: ignored
+      KAFKA_ZOOKEEPER_CONNECT: ignored
+    ports:
+      - "7073:7073"
