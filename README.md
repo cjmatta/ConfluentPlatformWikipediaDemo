@@ -18,6 +18,16 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 $ git clone --recursive git@github.com:cjmatta/ConfluentPlatformWikipediaDemo.git
 ```
 
+...or use git clone and then submodule init/update:
+```
+$ git clone git@github.com:cjmatta/ConfluentPlatformWikipediaDemo.git
+$ cd ConfluentPlatformWikipediaDemo
+$ git submodule init
+Submodule 'kafka-connect-irc' (https://github.com/cjmatta/kafka-connect-irc) registered for path 'kafka-connect-irc'
+Submodule 'kafka-connect-transform-wikiedit' (https://github.com/cjmatta/kafka-connect-transform-wikiedit) registered for path 'kafka-connect-transform-wikiedit'
+$ git submodule update
+```
+
 1. Run `./scripts/build_connector_and_transformer.sh` to build and install the IRC connector and the transformer that will parse the Wikipedia edit messages to data.
 2. Start demo with `docker-compose up -d`
 3. Once everything is up and stable open [http://localhost:9021](http://localhost:9021) and you should see Control Center
