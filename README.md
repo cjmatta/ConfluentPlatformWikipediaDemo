@@ -13,6 +13,11 @@ Demo streaming pipeline built around the Confluent platform, uses the following:
 This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and #en.wiktionary and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Connect Single Message Transform: [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
 
 ### Getting started
+**note**: Since this repository uses submodules please clone with `--recursive`:
+```
+$ git clone --recursive git@github.com:cjmatta/ConfluentPlatformWikipediaDemo.git
+```
+
 1. Run `./scripts/build_connector_and_transformer.sh` to build and install the IRC connector and the transformer that will parse the Wikipedia edit messages to data.
 2. Start demo with `docker-compose up -d`
 3. Once everything is up and stable open [http://localhost:9021](http://localhost:9021) and you should see Control Center
