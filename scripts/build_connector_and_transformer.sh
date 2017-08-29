@@ -3,7 +3,7 @@
 DIR=$(cd $(dirname $0); pwd);
 cd $DIR/../kafka-connect-irc && \
 mvn clean package && \
-cp -R target/kafka-connect-irc-3.3.0-package/share/java/kafka-connect-irc $DIR/../connect-plugins
+cp -R ./target/kafka-connect-irc-3.3.0-package/share/java/kafka-connect-irc $DIR/../connect-plugins/kafka-connect-irc
 
 # now build the transfomer
 
