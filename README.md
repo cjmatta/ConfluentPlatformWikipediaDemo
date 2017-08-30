@@ -28,7 +28,7 @@ Submodule 'kafka-connect-transform-wikiedit' (https://github.com/cjmatta/kafka-c
 $ git submodule update
 ```
 
-1. Run `./scripts/build_connector_and_transformer.sh` to build and install the IRC connector and the transformer that will parse the Wikipedia edit messages to data.
+1. Run `make clean all` to build the IRC connector and the transformer that will parse the Wikipedia edit messages to data. These are saved to `connect-plugins` path, which is a shared volume to the `connect` docker container
 2. Start demo with `docker-compose up -d`
 3. Once everything is up and stable open [http://localhost:9021](http://localhost:9021) and you should see Control Center
 4. To start streaming from IRC run `./scripts/submit_wikipedia_irc_config.sh`
