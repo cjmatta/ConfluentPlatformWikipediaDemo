@@ -58,7 +58,7 @@ control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficSe
 3. Once everything is up and stable, including Confluent Control Center, run the setup script that configures the Kafka connectors and partially configures Kibana:
 
 ```bash
-$ ./script/setup.sh
+$ ./scripts/setup.sh
 ```
 
 4. Open Kibana [http://localhost:5601/](http://localhost:5601/). Navigate to "Management --> Saved Objects" and click `Import` and load the `kibana_dash.json` file, click "Yes, overwrite all". Navigate to the Dashboard tab (speedometer icon) and open "Wikipedia".
