@@ -63,13 +63,13 @@ $ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayNa
 $ ./scripts/submit_wikipedia_irc_config.sh
 ```
 
-5. Watch the live messages from the `wikipedia.parsed` topic:
+5. In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
 
 ```bash
 $ ./scripts/listen_wikipedia.parsed.sh
 ```
 
-6. Watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
+6. In a different terminal, watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
 
 ```bash
 $ ./scripts/listen_wikipedia.failed.sh
@@ -93,9 +93,9 @@ $ ./scripts/submit_elastic_sink_config.sh
 $ ./scripts/configure_kibana_dashboard.sh
 ```
 
-10. Open Kibana [http://localhost:5601/](http://localhost:5601/). Navigate to the "Saved Objects" tab and click `import` and load the `kibana_dash.json` file. Navigate to the Dashboard tab (speedometer icon) and click open -> "Wikipedia"
+10. Open Kibana [http://localhost:5601/](http://localhost:5601/). Navigate to "Management --> Saved Objects" and click `Import` and load the `kibana_dash.json` file, click "Yes, overwrite all". Navigate to the Dashboard tab (speedometer icon) and open "Wikipedia".
 
-11. Check back in with Control Center GUI to see status on messages produced/consumed
+11. Return to the Confluent Control Center GUI to see status of messages produced/consumed
 
 
 #### Teardown and stopping
