@@ -41,10 +41,10 @@ control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficSe
 
 ```bash
 # If you have `jq`
-$ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Production Kafka Cluster"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | jq --raw-output .[0].clusterId)
+$ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka East"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | jq --raw-output .[0].clusterId)
 
 # If you don't have `jq`
-$ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Production Kafka Cluster"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | awk -v FS="(clusterId\":\"|\",\"displayName)" '{print $2}' )
+$ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka East"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | awk -v FS="(clusterId\":\"|\",\"displayName)" '{print $2}' )
 ```
 
 4. Start streaming from IRC:
