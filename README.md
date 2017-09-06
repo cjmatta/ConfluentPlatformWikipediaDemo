@@ -46,9 +46,11 @@ $ make clean all
 $ ls connect-plugins
 ```
 
-2. Start demo with `docker-compose up -d`. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready. You can check when it's ready when the logs show the following event
+2. Start Docker Compose. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready. You can check when it's ready when the logs show the following event
 
 ```bash
+$ docker-compose up -d
+...
 $ docker-compose logs -f control-center | grep -e HTTP
 control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficServerConnector@26a529dc{HTTP/1.1}{0.0.0.0:9021} (org.eclipse.jetty.server.NetworkTrafficServerConnector)
 ```
