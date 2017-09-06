@@ -40,6 +40,12 @@ $ git submodule update
 
 1. Run `make clean all` to build the IRC connector and the transformer that will parse the Wikipedia edit messages to data. These are saved to `connect-plugins` path, which is a shared volume to the `connect` docker container
 
+```bash
+$ make clean all
+...
+$ ls connect-plugins
+```
+
 2. Start demo with `docker-compose up -d`. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready. You can check when it's ready when the logs show the following event
 
 ```bash
@@ -47,56 +53,36 @@ $ docker-compose logs -f control-center | grep -e HTTP
 control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficServerConnector@26a529dc{HTTP/1.1}{0.0.0.0:9021} (org.eclipse.jetty.server.NetworkTrafficServerConnector)
 ```
 
-3. Once everything is up and stable, open the Control Center GUI at [http://localhost:9021](http://localhost:9021). You can optionally rename the cluster with the following commands from your host machine:
+3. Once everything is up and stable, including Confluent Control Center, run the setup script that configures the Kafka connectors and partially configures Kibana:
 
 ```bash
-# If you have `jq`
-$ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka East"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | jq --raw-output .[0].clusterId)
-
-# If you don't have `jq`
-$ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka East"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | awk -v FS="(clusterId\":\"|\",\"displayName)" '{print $2}' )
+$ ./script/setup.sh
 ```
 
-4. Start streaming from IRC, source connector:
+4. Open Kibana [http://localhost:5601/](http://localhost:5601/). Navigate to "Management --> Saved Objects" and click `Import` and load the `kibana_dash.json` file, click "Yes, overwrite all". Navigate to the Dashboard tab (speedometer icon) and open "Wikipedia".
 
-```bash
-$ ./scripts/submit_wikipedia_irc_config.sh
-```
+5. Open the Control Center GUI at [http://localhost:9021](http://localhost:9021) and see the Kafka connectors and status of messages produced and consumed
 
-5. In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
+
+### See Topic Messages
+
+In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
 
 ```bash
 $ ./scripts/listen_wikipedia.parsed.sh
 ```
 
-6. In a different terminal, watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
+In a different terminal, watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
 
 ```bash
 $ ./scripts/listen_wikipedia.failed.sh
 ```
 
-7. Tell Elasticsearch what the data looks like:
+
+### Teardown and stopping
+Stop and destroy all components and clear all volumes from Docker.
 
 ```bash
-$ ./scripts/set_elasticsearch_mapping.sh
+$ ./scripts/reset_demo.sh
 ```
 
-8. Start sending data to Elasticsearch, sink connector:
-
-```bash
-$ ./scripts/submit_elastic_sink_config.sh
-```
-
-9. Configure Kibana settings:
-
-```bash
-$ ./scripts/configure_kibana_dashboard.sh
-```
-
-10. Open Kibana [http://localhost:5601/](http://localhost:5601/). Navigate to "Management --> Saved Objects" and click `Import` and load the `kibana_dash.json` file, click "Yes, overwrite all". Navigate to the Dashboard tab (speedometer icon) and open "Wikipedia".
-
-11. Return to the Confluent Control Center GUI to see status of messages produced/consumed
-
-
-#### Teardown and stopping
-Running `reset_demo.sh` will stop and destroy all components and clear all volumes from Docker.
