@@ -14,13 +14,16 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 
 ![image](drawing.png)
 
-### Getting started
-**Note**: Since this repository uses submodules please clone with `--recursive`:
+### Installation
+
+1. Since this repository uses submodules, clone with `--recursive`:
+
 ```
 $ git clone --recursive git@github.com:confluentinc/ConfluentPlatformWikipediaDemo.git
 ```
 
-...or use git clone and then submodule init/update:
+Otherwise, git clone and then submodule init/update:
+
 ```
 $ git clone git@github.com:confluentinc/ConfluentPlatformWikipediaDemo.git
 $ cd ConfluentPlatformWikipediaDemo
@@ -29,6 +32,11 @@ Submodule 'kafka-connect-irc' (https://github.com/cjmatta/kafka-connect-irc) reg
 Submodule 'kafka-connect-transform-wikiedit' (https://github.com/cjmatta/kafka-connect-transform-wikiedit) registered for path 'kafka-connect-transform-wikiedit'
 $ git submodule update
 ```
+
+2. Increase the memory available to Docker. Default is 2GB, increase to at least 6GB.
+
+
+### Running the Demo
 
 1. Run `make clean all` to build the IRC connector and the transformer that will parse the Wikipedia edit messages to data. These are saved to `connect-plugins` path, which is a shared volume to the `connect` docker container
 
