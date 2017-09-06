@@ -15,12 +15,12 @@ This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and 
 ### Getting started
 **note**: Since this repository uses submodules please clone with `--recursive`:
 ```
-$ git clone --recursive git@github.com:cjmatta/ConfluentPlatformWikipediaDemo.git
+$ git clone --recursive git@github.com:confluentinc/ConfluentPlatformWikipediaDemo.git
 ```
 
 ...or use git clone and then submodule init/update:
 ```
-$ git clone git@github.com:cjmatta/ConfluentPlatformWikipediaDemo.git
+$ git clone git@github.com:confluentinc/ConfluentPlatformWikipediaDemo.git
 $ cd ConfluentPlatformWikipediaDemo
 $ git submodule init
 Submodule 'kafka-connect-irc' (https://github.com/cjmatta/kafka-connect-irc) registered for path 'kafka-connect-irc'
