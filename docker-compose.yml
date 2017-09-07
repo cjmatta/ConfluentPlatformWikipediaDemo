@@ -136,3 +136,25 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: ignored
     ports:
       - "7073:7073"
+  consumer_elasticsearch_1:
+    image: 'docker.confluent.io:5000/throttled-consumer:3.2.0'
+    depends_on:
+      - kafka
+    ports:
+      - '8800'
+    environment:
+      CONSUMER_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONSUMER_GROUP_ID: app
+      CONSUMER_CLIENT_ID: consumer_app_1
+      THROTTLED_CONSUMER_KAFKA_TOPICS: "wikipedia.parsed"
+  consumer_elasticsearch_2:
+    image: 'docker.confluent.io:5000/throttled-consumer:3.2.0'
+    depends_on:
+      - kafka
+    ports:
+      - '8800'
+    environment:
+      CONSUMER_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONSUMER_GROUP_ID: app
+      CONSUMER_CLIENT_ID: consumer_app_2
+      THROTTLED_CONSUMER_KAFKA_TOPICS: "wikipedia.parsed"

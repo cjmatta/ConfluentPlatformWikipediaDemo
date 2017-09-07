@@ -65,6 +65,21 @@ $ ./scripts/setup.sh
 
 5. Open the Control Center GUI at [http://localhost:9021](http://localhost:9021) and see the Kafka connectors and status of messages produced and consumed
 
+### Rate limiting the clients
+
+If you want to rate limit the clients to see the performance impact in C3:
+
+1. Install the required python modules.
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Once you have brought up the Docker environment and confirmed it is running, set the rate limit
+
+```bash
+python change-consumer-rate.py --consumer elasticsearch --rate 1
+```
 
 ### See Topic Messages
 
