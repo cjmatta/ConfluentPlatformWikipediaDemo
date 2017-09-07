@@ -65,20 +65,37 @@ $ ./scripts/setup.sh
 
 5. Open the Control Center GUI at [http://localhost:9021](http://localhost:9021) and see the Kafka connectors and status of messages produced and consumed
 
-### Rate limiting the clients
 
-If you want to rate limit the clients to see the performance impact in C3:
+### Slow Consumers
 
-1. Install the required python modules.
+To simulate a slow consumer, we will use Kafka's quota feature to rate-limit consumption from the broker side.
+
+1. Start consuming from topic `wikipedia.parsed` with a new consumer group `app` which has two consumers `consumer_app_1` and `consumer_app_2`. It will run in the background.
 
 ```bash
-pip install -r requirements.txt
+$ ./scripts/start_consumer_app.sh
 ```
 
-2. Once you have brought up the Docker environment and confirmed it is running, set the rate limit
+2. Let the above consumers run for a while until it has steady consumption.
+
+3. Add a consumption quota for one of the consumers in the consumer group `app`
 
 ```bash
-python change-consumer-rate.py --consumer elasticsearch --rate 1
+$ ./scripts/throttle_consumer.sh 1 add
+```
+
+4. View in C3 how this one consumer starts to lag.
+
+5. Remove the consumption quota for the consumer.
+
+```bash
+$ ./scripts/throttle_consumer.sh 1 delete
+```
+
+6. Stop consuming from topic `wikipedia.parsed` with a new consumer group `app`.
+
+```bash
+$ ./scripts/stop_consumer_app.sh
 ```
 
 ### See Topic Messages

@@ -68,6 +68,7 @@ services:
       CONNECT_PLUGIN_PATH: /connect-plugins
       CONNECT_LOG4J_ROOT_LOGLEVEL: DEBUG
       CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
+      CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-3.3.0.jar
   elasticsearch:
     image: library/elasticsearch:latest
     restart: always
@@ -114,13 +115,13 @@ services:
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     ports:
       - 8081:8081
-  kafka-create-topics:
+  kafka-client:
     image: confluentinc/cp-enterprise-kafka:3.3.0
     depends_on:
       - kafka
-    hostname: kafka-create-topics
+    hostname: kafka-client
     # We defined a dependency on "kafka", but `depends_on` will NOT wait for the
-    # dependencies to be "ready" before starting the "kafka-create-topics"
+    # dependencies to be "ready" before starting the "kafka-client"
     # container;  it waits only until the dependencies have started.  Hence we
     # must control startup order more explicitly.
     # See https://docs.docker.com/compose/startup-order/
@@ -136,25 +137,3 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: ignored
     ports:
       - "7073:7073"
-  consumer_elasticsearch_1:
-    image: 'docker.confluent.io:5000/throttled-consumer:3.2.0'
-    depends_on:
-      - kafka
-    ports:
-      - '8800'
-    environment:
-      CONSUMER_BOOTSTRAP_SERVERS: "kafka:9092"
-      CONSUMER_GROUP_ID: app
-      CONSUMER_CLIENT_ID: consumer_app_1
-      THROTTLED_CONSUMER_KAFKA_TOPICS: "wikipedia.parsed"
-  consumer_elasticsearch_2:
-    image: 'docker.confluent.io:5000/throttled-consumer:3.2.0'
-    depends_on:
-      - kafka
-    ports:
-      - '8800'
-    environment:
-      CONSUMER_BOOTSTRAP_SERVERS: "kafka:9092"
-      CONSUMER_GROUP_ID: app
-      CONSUMER_CLIENT_ID: consumer_app_2
-      THROTTLED_CONSUMER_KAFKA_TOPICS: "wikipedia.parsed"
