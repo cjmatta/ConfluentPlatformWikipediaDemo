@@ -10,7 +10,8 @@ ID=$1
 ACTION=$2
 
 if [ "$ACTION" == "add" ]; then
-  CONFIG="--add-config consumer_byte_rate=1024"
+  # Rate should be low enough to create lag but high enough to not stall the consumer
+  CONFIG="--add-config consumer_byte_rate=960"
 else
   CONFIG="--delete-config consumer_byte_rate"
 fi
