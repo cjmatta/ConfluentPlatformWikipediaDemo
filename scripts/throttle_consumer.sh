@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Initialize
-ID=1
-ACTION="add"
-
+# Usage
 if [[ -z "$1" ]] || [[ -z "$2" ]]; then
-  echo "Usage: ./throttle_consumer.sh [1|2] [add|delete]"
+  echo "Usage: ./throttle_consumer.sh [id 1|2] [quota add|delete]"
   exit 1
 fi
 
@@ -13,7 +10,7 @@ ID=$1
 ACTION=$2
 
 if [ "$ACTION" == "add" ]; then
-  CONFIG="--add-config consumer_byte_rate=256"
+  CONFIG="--add-config consumer_byte_rate=1024"
 else
   CONFIG="--delete-config consumer_byte_rate"
 fi
