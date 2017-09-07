@@ -98,6 +98,59 @@ $ ./scripts/throttle_consumer.sh 1 delete
 $ ./scripts/stop_consumer_app.sh
 ```
 
+### KSQL
+
+1. KSQL Docker image doesn't have the `monitoring-interceptors-3.3.0.jar` yet. Until then,
+use volumes to get in there. The Docker compose file assumes that you have this jar file
+on your local host in `/tmp/monitoring-interceptors-3.3.0.jar`.
+
+```bash
+$ ls /tmp/monitoring-interceptors-3.3.0.jar
+```
+
+2. Copy the `ksqlproperties` file to `/tmp/ksqlproperties`. The Docker compose file assumes
+ that you have this properties file on your local host in `/tmp/ksqlproperties`.
+
+```bash
+$ cp ksqlproperties /tmp/ksqlproperties
+```
+
+3. Start KSQL
+
+```bash
+$ docker-compose exec ksql-cli ksql-cli local --bootstrap-server kafka:9092 --properties-file /tmp/ksqlproperties
+```
+
+4. Create the raw source stream
+
+```bash
+ksql> CREATE STREAM wikipedia_source (schema string, payload string) WITH (kafka_topic='wikipedia.parsed', value_format='JSON');
+```
+
+5. Create a structured table
+
+```bash
+ksql> CREATE STREAM wikipedia AS SELECT \
+  extractJsonField(payload, '$.wikipage') AS wikipage, \
+  extractJsonField(payload, '$.username') AS username, \
+  extractJsonField(payload, '$.commitmessage') AS commitmessage, \
+  CAST(extractJsonField(payload, '$.bytechange') AS BIGINT) AS bytechange, \
+  extractJsonField(payload, '$.diffurl') AS diffurl, \
+  CAST(extractJsonField(payload, '$.createdat') AS BIGINT) AS createdat, \
+  extractJsonField(payload, '$.channel') AS channel, \
+  extractJsonField(payload, '$.isnew') AS isnew, \
+  extractJsonField(payload, '$.isminor') AS isminor, \
+  extractJsonField(payload, '$.isbot') AS isbot, \
+  extractJsonField(payload, '$.isunpatrolled') AS isunpatrolled \
+  from wikipedia_source where payload <> 'null';
+```
+
+6. Create a new stream of non-bot edits
+
+```bash
+ksql> CREATE STREAM wikipedianobot AS SELECT * FROM wikipedia WHERE isbot <> 'true';
+```
+
 ### See Topic Messages
 
 In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
