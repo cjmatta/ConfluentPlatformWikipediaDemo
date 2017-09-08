@@ -38,7 +38,7 @@ use volumes to get in there. The Docker compose file assumes that you have this 
 on your local host in `/tmp/monitoring-interceptors-3.3.0.jar`.
 
 ```bash
-$ ls /tmp/monitoring-interceptors-3.3.0.jar
+$ wget -P /tmp/ http://packages.confluent.io/maven/io/confluent/monitoring-interceptors/3.3.0/monitoring-interceptors-3.3.0.jar
 ```
 
 3. If you are using KSQL with the Elasticsearch sink connector, you need to pull in
