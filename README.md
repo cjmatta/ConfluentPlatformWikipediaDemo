@@ -33,7 +33,24 @@ Submodule 'kafka-connect-transform-wikiedit' (https://github.com/cjmatta/kafka-c
 $ git submodule update
 ```
 
-2. Increase the memory available to Docker. Default is 2GB, increase to at least 6GB.
+2. KSQL Docker image doesn't have the `monitoring-interceptors-3.3.0.jar` yet. Until then,
+use volumes to get in there. The Docker compose file assumes that you have this jar file
+on your local host in `/tmp/monitoring-interceptors-3.3.0.jar`.
+
+```bash
+$ ls /tmp/monitoring-interceptors-3.3.0.jar
+```
+
+3. If you are using KSQL with the Elasticsearch sink connector, you need to pull in
+the `null-filter-4.0.0-SNAPSHOT.jar`. It filters possible nulls resulting from KSQL queries.
+You can find this jar from the [KSQL repo](http://github.com/confluentinc/ksql).
+The Docker compose file assumes that you have this jar file on your local host in `/tmp/null-filter-4.0.0-SNAPSHOT.jar`
+
+```bash
+$ ls /tmp/null-filter-4.0.0-SNAPSHOT.jar
+```
+
+3. Increase the memory available to Docker. Default is 2GB, increase to at least 6GB.
 
 
 ### Running the Demo
@@ -55,15 +72,53 @@ $ docker-compose logs -f control-center | grep -e HTTP
 control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficServerConnector@26a529dc{HTTP/1.1}{0.0.0.0:9021} (org.eclipse.jetty.server.NetworkTrafficServerConnector)
 ```
 
-3. Once everything is up and stable, including Confluent Control Center, run the setup script that configures the Kafka connectors and partially configures Kibana:
+3. Wait till Confluent Control Center is running fully.
+
+4. Run a bash script that sets up Kafka connectors and Elasticsearch and Kibana. Choose one of these two options:
+
+(a) If you want to run traffic straight from Wikipedia IRC to Elasticsearch, then run this script:
 
 ```bash
 $ ./scripts/setup.sh
 ```
 
-4. Open Kibana [http://localhost:5601/](http://localhost:5601/). Navigate to "Management --> Saved Objects" and click `Import` and load the `kibana_dash.json` file, click "Yes, overwrite all". Navigate to the Dashboard tab (speedometer icon) and open "Wikipedia".
+(b) If you want to run traffic from Wikipedia IRC through KSQL to Elasticsearch, then run this script:
 
-5. Open the Control Center GUI at [http://localhost:9021](http://localhost:9021) and see the Kafka connectors and status of messages produced and consumed
+```bash
+$ ./scripts/sink_from_ksql/setup.sh
+```
+
+5. If you went with option (b) because you want to demo KSQL, then you need to run KSQL specifically as
+follows, which generates an output topic that feeds into the Elasticsearch sink connector.
+If you went with option (a), you can skip this step.
+
+5a. Start KSQL
+
+```bash
+$ docker-compose exec ksql-cli ksql-cli local --bootstrap-server kafka:9092 --properties-file /tmp/ksqlproperties
+```
+
+5b. Run saved KSQL commands.
+
+```bash
+ksql> run script '/tmp/ksqlcommands';
+```
+
+5c. Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
+
+6. Open Kibana [http://localhost:5601/](http://localhost:5601/).
+
+7. Navigate to "Management --> Saved Objects" and click `Import`. Then choose of these two options:
+
+(a) If you are running traffic straight from Wikipedia IRC to Elasticsearch without KSQL, then load the `kibana_dash.json` file
+
+(b) If you are running traffic from Wikipedia IRC through KSQL to Elasticsearch, then load the `scripts/sink_from_ksql/kibana_dash.json` file
+
+8. Click "Yes, overwrite all".
+
+9. Navigate to the Dashboard tab (speedometer icon) and open your new dashboard.
+
+10. Open the Control Center GUI at [http://localhost:9021](http://localhost:9021) and see the message delivery status, consumer groups, connectors.
 
 
 ### Slow Consumers
@@ -96,59 +151,6 @@ $ ./scripts/throttle_consumer.sh 1 delete
 
 ```bash
 $ ./scripts/stop_consumer_app.sh
-```
-
-### KSQL
-
-1. KSQL Docker image doesn't have the `monitoring-interceptors-3.3.0.jar` yet. Until then,
-use volumes to get in there. The Docker compose file assumes that you have this jar file
-on your local host in `/tmp/monitoring-interceptors-3.3.0.jar`.
-
-```bash
-$ ls /tmp/monitoring-interceptors-3.3.0.jar
-```
-
-2. Copy the `ksqlproperties` file to `/tmp/ksqlproperties`. The Docker compose file assumes
- that you have this properties file on your local host in `/tmp/ksqlproperties`.
-
-```bash
-$ cp ksqlproperties /tmp/ksqlproperties
-```
-
-3. Start KSQL
-
-```bash
-$ docker-compose exec ksql-cli ksql-cli local --bootstrap-server kafka:9092 --properties-file /tmp/ksqlproperties
-```
-
-4. Create the raw source stream
-
-```bash
-ksql> CREATE STREAM wikipedia_source (schema string, payload string) WITH (kafka_topic='wikipedia.parsed', value_format='JSON');
-```
-
-5. Create a structured table
-
-```bash
-ksql> CREATE STREAM wikipedia AS SELECT \
-  extractJsonField(payload, '$.wikipage') AS wikipage, \
-  extractJsonField(payload, '$.username') AS username, \
-  extractJsonField(payload, '$.commitmessage') AS commitmessage, \
-  CAST(extractJsonField(payload, '$.bytechange') AS BIGINT) AS bytechange, \
-  extractJsonField(payload, '$.diffurl') AS diffurl, \
-  CAST(extractJsonField(payload, '$.createdat') AS BIGINT) AS createdat, \
-  extractJsonField(payload, '$.channel') AS channel, \
-  extractJsonField(payload, '$.isnew') AS isnew, \
-  extractJsonField(payload, '$.isminor') AS isminor, \
-  extractJsonField(payload, '$.isbot') AS isbot, \
-  extractJsonField(payload, '$.isunpatrolled') AS isunpatrolled \
-  from wikipedia_source where payload <> 'null';
-```
-
-6. Create a new stream of non-bot edits
-
-```bash
-ksql> CREATE STREAM wikipedianobot WITH (PARTITIONS=6) AS SELECT * FROM wikipedia WHERE isbot <> 'true';
 ```
 
 ### See Topic Messages

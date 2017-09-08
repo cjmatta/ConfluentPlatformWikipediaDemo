@@ -9,14 +9,20 @@ fi
 HEADER="Content-Type: application/json"
 DATA=$( cat << EOF
 {
-  "name": "elasticsearch-wikipedia.parsed",
+  "name": "elasticsearch-WIKIPEDIABOT",
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "consumer.interceptor.classes": "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor",
-    "topics": "wikipedia.parsed",
+    "topics": "WIKIPEDIABOT",
+    "topic.index.map": "WIKIPEDIABOT:wikipediabot",
     "connection.url": "http://elasticsearch:9200",
     "type.name": "wikichange",
     "key.ignore": true,
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": false,
+    "transforms": "FilterNulls",
+    "transforms.FilterNulls.type": "io.confluent.transforms.NullFilter",
     "schema.ignore": true
 
   }

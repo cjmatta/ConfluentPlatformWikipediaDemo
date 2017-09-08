@@ -44,6 +44,7 @@ services:
       - schemaregistry
     volumes:
       - ./connect-plugins:/connect-plugins
+      - /tmp/null-filter-4.0.0-SNAPSHOT.jar:/usr/share/java/kafka-connect-elasticsearch/null-filter-4.0.0-SNAPSHOT.jar
     environment:
       CONNECT_BOOTSTRAP_SERVERS: kafka:9092
       CONNECT_REST_PORT: 8083
@@ -130,6 +131,8 @@ services:
                        cub kafka-ready -b kafka:9092 1 60 && \
                        kafka-topics --zookeeper zookeeper:2181 --topic wikipedia.parsed --create --replication-factor 1 --partitions 6 && \
                        kafka-topics --zookeeper zookeeper:2181 --topic wikipedia.failed --create --replication-factor 1 --partitions 6 && \
+                       kafka-topics --zookeeper zookeeper:2181 --topic WIKIPEDIABOT --create --replication-factor 1 --partitions 6 && \
+                       kafka-topics --zookeeper zookeeper:2181 --topic WIKIPEDIANOBOT --create --replication-factor 1 --partitions 6 && \
                        exit'"
     environment:
       # The following settings are listed here only to satisfy the image's requirements.
@@ -145,7 +148,8 @@ services:
       - kafka
     volumes:
       - /tmp/monitoring-interceptors-3.3.0.jar:/usr/share/java/ksql-cli/monitoring-interceptors-3.3.0.jar
-      - /tmp/ksqlproperties:/tmp/ksqlproperties
+      - $PWD/ksqlproperties:/tmp/ksqlproperties
+      - $PWD/ksqlcommands:/tmp/ksqlcommands
     command: "perl -e 'while(1){ sleep 99999 }'"
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
