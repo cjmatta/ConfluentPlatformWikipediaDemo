@@ -148,7 +148,7 @@ ksql> CREATE STREAM wikipedia AS SELECT \
 6. Create a new stream of non-bot edits
 
 ```bash
-ksql> CREATE STREAM wikipedianobot AS SELECT * FROM wikipedia WHERE isbot <> 'true';
+ksql> CREATE STREAM wikipedianobot WITH (PARTITIONS=6) AS SELECT * FROM wikipedia WHERE isbot <> 'true';
 ```
 
 ### See Topic Messages
