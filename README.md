@@ -64,13 +64,13 @@ control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficSe
 (a) If you want to run traffic straight from Wikipedia IRC to Elasticsearch, then run this script:
 
 ```bash
-$ ./scripts/setup.sh
+$ ./scripts_no_app/setup.sh
 ```
 
 (b) If you want to run traffic from Wikipedia IRC through KSQL to Elasticsearch, then run this script:
 
 ```bash
-$ ./scripts/sink_from_ksql/setup.sh
+$ ./scripts_ksql_app/sink_from_ksql/setup.sh
 ```
 
 5. If you went with option (b) because you want to demo KSQL, then you need to run KSQL specifically as
@@ -97,7 +97,7 @@ ksql> run script '/tmp/ksqlcommands';
 
 (a) If you are running traffic straight from Wikipedia IRC to Elasticsearch without KSQL, then load the `kibana_dash.json` file
 
-(b) If you are running traffic from Wikipedia IRC through KSQL to Elasticsearch, then load the `scripts/sink_from_ksql/kibana_dash.json` file
+(b) If you are running traffic from Wikipedia IRC through KSQL to Elasticsearch, then load the `scripts_ksql_app/kibana_dash.json` file
 
 8. Click "Yes, overwrite all".
 
@@ -113,7 +113,7 @@ To simulate a slow consumer, we will use Kafka's quota feature to rate-limit con
 1. Start consuming from topic `wikipedia.parsed` with a new consumer group `app` which has two consumers `consumer_app_1` and `consumer_app_2`. It will run in the background.
 
 ```bash
-$ ./scripts/start_consumer_app.sh
+$ ./scripts_no_app/start_consumer_app.sh
 ```
 
 2. Let the above consumers run for a while until it has steady consumption.
@@ -121,7 +121,7 @@ $ ./scripts/start_consumer_app.sh
 3. Add a consumption quota for one of the consumers in the consumer group `app`
 
 ```bash
-$ ./scripts/throttle_consumer.sh 1 add
+$ ./scripts_no_app/throttle_consumer.sh 1 add
 ```
 
 4. View in C3 how this one consumer starts to lag.
@@ -129,13 +129,13 @@ $ ./scripts/throttle_consumer.sh 1 add
 5. Remove the consumption quota for the consumer.
 
 ```bash
-$ ./scripts/throttle_consumer.sh 1 delete
+$ ./scripts_no_app/throttle_consumer.sh 1 delete
 ```
 
 6. Stop consuming from topic `wikipedia.parsed` with a new consumer group `app`.
 
 ```bash
-$ ./scripts/stop_consumer_app.sh
+$ ./scripts_no_app/stop_consumer_app.sh
 ```
 
 ### See Topic Messages
@@ -143,14 +143,14 @@ $ ./scripts/stop_consumer_app.sh
 In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
 
 ```bash
-$ ./scripts/listen_wikipedia.parsed.sh                 # If not using KSQL (Avro with Schema Registry)
-$ ./scripts/sink_from_ksql/listen_wikipedia.parsed.sh  # If using KSQL (no Avro, just JSON)
+$ ./scripts_no_app/listen_wikipedia.parsed.sh       # If not using KSQL (Avro with Schema Registry)
+$ ./scripts_ksql_app/listen_wikipedia.parsed.sh     # If using KSQL (no Avro, just JSON)
 ```
 
 In a different terminal, watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
 
 ```bash
-$ ./scripts/listen_wikipedia.failed.sh
+$ ./scripts_no_app/listen_wikipedia.failed.sh
 ```
 
 
@@ -158,6 +158,6 @@ $ ./scripts/listen_wikipedia.failed.sh
 Stop and destroy all components and clear all volumes from Docker.
 
 ```bash
-$ ./scripts/reset_demo.sh
+$ ./scripts_no_app/reset_demo.sh
 ```
 

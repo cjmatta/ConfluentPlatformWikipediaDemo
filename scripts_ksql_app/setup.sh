@@ -6,13 +6,13 @@ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName
 #curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka Raleigh"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | awk -v FS="(clusterId\":\"|\",\"displayName)" '{print $2}' )
 
 echo -e "\nStart streaming from IRC, source connector:"
-./scripts/submit_wikipedia_irc_config.sh
+./scripts_no_app/submit_wikipedia_irc_config.sh
 
 echo -e "\nTell Elasticsearch what the data looks like:"
-./scripts/sink_from_ksql/set_elasticsearch_mapping.sh
+./scripts_ksql_app/set_elasticsearch_mapping.sh
 
 echo -e "\nStart sending data to Elasticsearch, sink connector:"
-./scripts/sink_from_ksql/submit_elastic_sink_config.sh
+./scripts_ksql_app/submit_elastic_sink_config.sh
 
 echo -e "\nConfigure Kibana settings:"
-./scripts/sink_from_ksql/configure_kibana_dashboard.sh
+./scripts_ksql_app/configure_kibana_dashboard.sh
