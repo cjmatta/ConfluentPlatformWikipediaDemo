@@ -2,7 +2,6 @@
 
 # Script to build the kafka-connect-irc connector and move them to the plugin path directory
 export PLUGINPATH:="connect-plugins"
-export INTERCEPTORPATH:="monitoring-interceptors"
 
 all: install irc transform
 
