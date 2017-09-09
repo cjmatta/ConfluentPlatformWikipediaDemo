@@ -4,7 +4,7 @@
 export PLUGINPATH:="connect-plugins"
 export INTERCEPTORPATH:="monitoring-interceptors"
 
-all: install monitoringinterceptors irc transform
+all: install irc transform
 
 install:
 	if [[ ! -d $(PLUGINPATH) ]]; then mkdir $(PLUGINPATH); fi

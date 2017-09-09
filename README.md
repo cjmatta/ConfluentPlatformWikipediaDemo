@@ -158,7 +158,8 @@ $ ./scripts/stop_consumer_app.sh
 In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
 
 ```bash
-$ ./scripts/listen_wikipedia.parsed.sh
+$ ./scripts/listen_wikipedia.parsed.sh                 # If not using KSQL (Avro with Schema Registry)
+$ ./scripts/sink_from_ksql/listen_wikipedia.parsed.sh  # If using KSQL (no Avro, just JSON)
 ```
 
 In a different terminal, watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
