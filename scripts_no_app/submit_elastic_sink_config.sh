@@ -17,6 +17,9 @@ DATA=$( cat << EOF
     "connection.url": "http://elasticsearch:9200",
     "type.name": "wikichange",
     "key.ignore": true,
+    "key.converter.schema.registry.url": "http://schemaregistry:8081",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schemaregistry:8081",
     "schema.ignore": true
 
   }
