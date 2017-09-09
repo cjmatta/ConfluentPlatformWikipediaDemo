@@ -33,24 +33,7 @@ Submodule 'kafka-connect-transform-wikiedit' (https://github.com/cjmatta/kafka-c
 $ git submodule update
 ```
 
-2. KSQL Docker image doesn't have the `monitoring-interceptors-3.3.0.jar` yet. Until then,
-use volumes to get in there. The Docker compose file assumes that you have this jar file
-on your local host in `/tmp/monitoring-interceptors-3.3.0.jar`.
-
-```bash
-$ wget -P /tmp/ http://packages.confluent.io/maven/io/confluent/monitoring-interceptors/3.3.0/monitoring-interceptors-3.3.0.jar
-```
-
-3. If you are using KSQL with the Elasticsearch sink connector, you need to pull in
-the `null-filter-4.0.0-SNAPSHOT.jar`. It filters possible nulls resulting from KSQL queries.
-You can find this jar from the [KSQL repo](http://github.com/confluentinc/ksql).
-The Docker compose file assumes that you have this jar file on your local host in `/tmp/null-filter-4.0.0-SNAPSHOT.jar`
-
-```bash
-$ ls /tmp/null-filter-4.0.0-SNAPSHOT.jar
-```
-
-3. Increase the memory available to Docker. Default is 2GB, increase to at least 6GB.
+2. Increase the memory available to Docker. Default is 2GB, increase to at least 6GB.
 
 
 ### Running the Demo
