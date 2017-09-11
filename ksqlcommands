@@ -1,0 +1,11 @@
+set 'producer.interceptor.classes'='io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor';
+set 'consumer.interceptor.classes'='io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor';
+set 'application.id'='ksql-demo';
+
+CREATE STREAM wikipedia_source (schema string, payload string) WITH (kafka_topic='wikipedia.parsed', value_format='JSON');
+
+CREATE STREAM wikipedia AS SELECT extractJsonField(payload, '$.wikipage') AS wikipage, extractJsonField(payload, '$.username') AS username, extractJsonField(payload, '$.commitmessage') AS commitmessage, CAST(extractJsonField(payload, '$.bytechange') AS BIGINT) AS bytechange, extractJsonField(payload, '$.diffurl') AS diffurl, CAST(extractJsonField(payload, '$.createdat') AS BIGINT) AS createdat, extractJsonField(payload, '$.channel') AS channel, extractJsonField(payload, '$.isnew') AS isnew, extractJsonField(payload, '$.isminor') AS isminor, extractJsonField(payload, '$.isbot') AS isbot, extractJsonField(payload, '$.isunpatrolled') AS isunpatrolled from wikipedia_source where payload <> 'null';
+
+CREATE STREAM wikipedianobot WITH (PARTITIONS=6) AS SELECT * FROM wikipedia WHERE isbot <> 'true';
+
+CREATE STREAM wikipediabot WITH (PARTITIONS=6) AS SELECT * FROM wikipedia WHERE isbot = 'true';
