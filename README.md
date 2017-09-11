@@ -12,7 +12,7 @@
 
 This demo is a streaming pipeline using Apache Kafka. It connects to the Wikimedia Foundation's IRC channels (e.g. #en.wikipedia, #en.wiktionary) and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Connect Single Message Transform: [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
 
-![image](drawing.png)
+![image](drawing.jpeg)
 
 Components:
 * [Confluent Control Center](http://docs.confluent.io/current/control-center/docs/index.html)
