@@ -71,35 +71,44 @@ control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficSe
 
 ### Execution
 
-Now you must decide whether you want to run data straight through Kafka from Wikipedia IRC to Elasticsearch connectors without KSQL or with KSQL.
+Now you must decide how you want to run the demo, whether you want to run data either:
 
-1. If you want to run traffic straight from Wikipedia IRC to Elasticsearch *without KSQL*, then follow this step to setup the connectors, which will use Schema Registry and Avro.
-
-```bash
-$ ./scripts_no_app/setup.sh
-```
-
-2. On the other hand, if you want to run traffic from Wikipedia IRC *through KSQL* to Elasticsearch, then follow these steps to setup the connectors, which will use Json instead of Avro because KSQL does not support Avro with Schema Registry at this time.
-
-2a. Setup connectors
+* Straight through Kafka from Wikipedia IRC to Elasticsearch without KSQL. The connectors use Schema Registry and Avro.
 
 ```bash
-$ ./scripts_ksql_app/setup.sh
+$ export DEMOPATH=scripts_no_app
 ```
 
-2b. Start KSQL
+or
+
+* From Wikipedia IRC to Elasticsearch with KSQL. The connectors  use Json instead of Avro because KSQL does not support Avro with Schema Registry at this time.
+
+
+```bash
+$ export DEMOPATH=scripts_ksql_app
+```
+
+1. Setup the cluster and connectors
+
+```bash
+$ ./$DEMOPATH/setup.sh
+```
+
+2. If you are demo'ing KSQL.
+
+2a. Start KSQL
 
 ```bash
 $ docker-compose exec ksql-cli ksql-cli local --bootstrap-server kafka:9092 --properties-file /tmp/ksqlproperties
 ```
 
-2c. Run saved KSQL commands which generates an output topic that feeds into the Elasticsearch sink connector.
+2b. Run saved KSQL commands which generates an output topic that feeds into the Elasticsearch sink connector.
 
 ```bash
 ksql> run script '/tmp/ksqlcommands';
 ```
 
-2d. Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
+2c. Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
 
 3. Open Kibana [http://localhost:5601/](http://localhost:5601/).
 
@@ -122,7 +131,7 @@ To simulate a slow consumer, we will use Kafka's quota feature to rate-limit con
 1. Start consuming from topic `wikipedia.parsed` with a new consumer group `app` which has two consumers `consumer_app_1` and `consumer_app_2`. It will run in the background.
 
 ```bash
-$ ./scripts_no_app/start_consumer_app.sh
+$ ./$DEMOPATH/start_consumer_app.sh
 ```
 
 2. Let the above consumers run for a while until it has steady consumption.
@@ -130,7 +139,7 @@ $ ./scripts_no_app/start_consumer_app.sh
 3. Add a consumption quota for one of the consumers in the consumer group `app`
 
 ```bash
-$ ./scripts_no_app/throttle_consumer.sh 1 add
+$ ./$DEMOPATH/throttle_consumer.sh 1 add
 ```
 
 4. View in C3 how this one consumer starts to lag.
@@ -138,13 +147,13 @@ $ ./scripts_no_app/throttle_consumer.sh 1 add
 5. Remove the consumption quota for the consumer.
 
 ```bash
-$ ./scripts_no_app/throttle_consumer.sh 1 delete
+$ ./$DEMOPATH/throttle_consumer.sh 1 delete
 ```
 
 6. Stop consuming from topic `wikipedia.parsed` with a new consumer group `app`.
 
 ```bash
-$ ./scripts_no_app/stop_consumer_app.sh
+$ ./$DEMOPATH/stop_consumer_app.sh
 ```
 
 ### Topic Messages
@@ -152,14 +161,13 @@ $ ./scripts_no_app/stop_consumer_app.sh
 In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
 
 ```bash
-$ ./scripts_no_app/listen_wikipedia.parsed.sh       # If not using KSQL (Avro with Schema Registry)
-$ ./scripts_ksql_app/listen_wikipedia.parsed.sh     # If using KSQL (no Avro, just JSON)
+$ ./$DEMOPATH/listen_wikipedia.parsed.sh
 ```
 
 In a different terminal, watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
 
 ```bash
-$ ./scripts_no_app/listen_wikipedia.failed.sh
+$ ./$DEMOPATH/listen_wikipedia.failed.sh
 ```
 
 
@@ -167,6 +175,6 @@ $ ./scripts_no_app/listen_wikipedia.failed.sh
 Stop and destroy all components and clear all volumes from Docker.
 
 ```bash
-$ ./scripts_no_app/reset_demo.sh
+$ ./$DEMOPATH/reset_demo.sh
 ```
 
