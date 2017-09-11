@@ -1,18 +1,29 @@
-### Confluent Platform Wikipedia Demo
-Demo streaming pipeline built around the Confluent platform, uses the following:
+**Table of Contents**
 
-* [Kafka Connect](http://docs.confluent.io/3.1.1/connect/index.html)
-* [Kafka Streams](http://docs.confluent.io/3.1.1/streams/index.html)
-* [Confluent Schema Registry](http://docs.confluent.io/3.1.1/schema-registry/docs/index.html)
-* Conflulent Control Center
-* [kafka-connect-irc source connector](https://github.com/cjmatta/kafka-connect-irc)
-* [kafka-connect-elasticsearch sink connectors](http://docs.confluent.io/3.1.1/connect/connect-elasticsearch/docs/elasticsearch_connector.html)
-* [Elasticsearch](https://www.elastic.co/products/elasticsearch)
-* [Kibana](https://www.elastic.co/products/kibana)
+- [Overview](#overview)
+- [Installation](#installation)
+- [Docker](#docker)
+- [Execution](#execution)
+- [Slow consumers](#slow-consumers)
+- [Topic messages](#topic-messages)
+- [Teardown](#teardown)
 
-This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and #en.wiktionary and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Connect Single Message Transform: [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
+### Overview
+
+This demo is a streaming pipeline using Apache Kafka. It connects to the Wikimedia Foundation's IRC channels (e.g. #en.wikipedia, #en.wiktionary) and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Connect Single Message Transform: [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
 
 ![image](drawing.png)
+
+Components:
+* [Confluent Control Center](http://docs.confluent.io/current/control-center/docs/index.html)
+* [Kafka Connect](http://docs.confluent.io/current/connect/index.html)
+* [Kafka Streams](http://docs.confluent.io/current/streams/index.html)
+* [KSQL](https://github.com/confluentinc/ksql)
+* [Confluent Schema Registry](http://docs.confluent.io/current/schema-registry/docs/index.html)
+* [kafka-connect-irc source connector](https://github.com/cjmatta/kafka-connect-irc)
+* [kafka-connect-elasticsearch sink connector](http://docs.confluent.io/current/connect/connect-elasticsearch/docs/elasticsearch_connector.html)
+* [Elasticsearch](https://www.elastic.co/products/elasticsearch)
+* [Kibana](https://www.elastic.co/products/kibana)
 
 ### Installation
 
@@ -52,10 +63,7 @@ $ ls /tmp/null-filter-4.0.0-SNAPSHOT.jar
 
 3. Increase the memory available to Docker. Default is 2GB, increase to at least 6GB.
 
-
-### Running the Demo
-
-1. Run `make clean all` to build the IRC connector and the transformer that will parse the Wikipedia edit messages to data. These are saved to `connect-plugins` path, which is a shared volume to the `connect` docker container
+3. Run `make clean all` to build the IRC connector and the transformer that will parse the Wikipedia edit messages to data. These are saved to `connect-plugins` path, which is a shared volume to the `connect` docker container
 
 ```bash
 $ make clean all
@@ -63,56 +71,68 @@ $ make clean all
 $ ls connect-plugins
 ```
 
-2. Start Docker Compose. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready. You can check when it's ready when the logs show the following event
+### Docker
+
+1. Start Docker Compose. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready.
 
 ```bash
 $ docker-compose up -d
-...
+```
+
+2. Wait till Confluent Control Center is running fully.  You can check when it's ready when the logs show the following event
+
+```bash
 $ docker-compose logs -f control-center | grep -e HTTP
 control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficServerConnector@26a529dc{HTTP/1.1}{0.0.0.0:9021} (org.eclipse.jetty.server.NetworkTrafficServerConnector)
 ```
 
-3. Wait till Confluent Control Center is running fully.
+### Execution
 
-4. Run a bash script that sets up Kafka connectors and Elasticsearch and Kibana. Choose one of these two options:
+Now you must decide how you want to run the demo, whether you want to run data either:
 
-(a) If you want to run traffic straight from Wikipedia IRC to Elasticsearch, then run this script:
-
-```bash
-$ ./scripts/setup.sh
-```
-
-(b) If you want to run traffic from Wikipedia IRC through KSQL to Elasticsearch, then run this script:
+* Straight through Kafka from Wikipedia IRC to Elasticsearch without KSQL. The connectors use Schema Registry and Avro.
 
 ```bash
-$ ./scripts/sink_from_ksql/setup.sh
+$ export DEMOPATH=scripts_no_app
 ```
 
-5. If you went with option (b) because you want to demo KSQL, then you need to run KSQL specifically as
-follows, which generates an output topic that feeds into the Elasticsearch sink connector.
-If you went with option (a), you can skip this step.
+or
 
-5a. Start KSQL
+* From Wikipedia IRC to Elasticsearch with KSQL. The connectors  use Json instead of Avro because KSQL does not support Avro with Schema Registry at this time.
+
+
+```bash
+$ export DEMOPATH=scripts_ksql_app
+```
+
+1. Setup the cluster and connectors
+
+```bash
+$ ./$DEMOPATH/setup.sh
+```
+
+2. If you are demo'ing KSQL.
+
+2a. Start KSQL
 
 ```bash
 $ docker-compose exec ksql-cli ksql-cli local --bootstrap-server kafka:9092 --properties-file /tmp/ksqlproperties
 ```
 
-5b. Run saved KSQL commands.
+2b. Run saved KSQL commands which generates an output topic that feeds into the Elasticsearch sink connector.
 
 ```bash
 ksql> run script '/tmp/ksqlcommands';
 ```
 
-5c. Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
+2c. Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
 
-6. Open Kibana [http://localhost:5601/](http://localhost:5601/).
+3. Open Kibana [http://localhost:5601/](http://localhost:5601/).
 
-7. Navigate to "Management --> Saved Objects" and click `Import`. Then choose of these two options:
+4. Navigate to "Management --> Saved Objects" and click `Import`. Then choose of these two options:
 
-(a) If you are running traffic straight from Wikipedia IRC to Elasticsearch without KSQL, then load the `kibana_dash.json` file
-
-(b) If you are running traffic from Wikipedia IRC through KSQL to Elasticsearch, then load the `scripts/sink_from_ksql/kibana_dash.json` file
+* If you are running traffic straight from Wikipedia IRC to Elasticsearch _without KSQL_, then load the `scripts_no_app/kibana_dash.json` file
+* If you are running traffic from Wikipedia IRC _through KSQL_ to Elasticsearch, then load the `scripts_ksql_app/kibana_dash.json` file
 
 8. Click "Yes, overwrite all".
 
@@ -128,7 +148,7 @@ To simulate a slow consumer, we will use Kafka's quota feature to rate-limit con
 1. Start consuming from topic `wikipedia.parsed` with a new consumer group `app` which has two consumers `consumer_app_1` and `consumer_app_2`. It will run in the background.
 
 ```bash
-$ ./scripts/start_consumer_app.sh
+$ ./$DEMOPATH/start_consumer_app.sh
 ```
 
 2. Let the above consumers run for a while until it has steady consumption.
@@ -136,7 +156,7 @@ $ ./scripts/start_consumer_app.sh
 3. Add a consumption quota for one of the consumers in the consumer group `app`
 
 ```bash
-$ ./scripts/throttle_consumer.sh 1 add
+$ ./$DEMOPATH/throttle_consumer.sh 1 add
 ```
 
 4. View in C3 how this one consumer starts to lag.
@@ -144,34 +164,33 @@ $ ./scripts/throttle_consumer.sh 1 add
 5. Remove the consumption quota for the consumer.
 
 ```bash
-$ ./scripts/throttle_consumer.sh 1 delete
+$ ./$DEMOPATH/throttle_consumer.sh 1 delete
 ```
 
 6. Stop consuming from topic `wikipedia.parsed` with a new consumer group `app`.
 
 ```bash
-$ ./scripts/stop_consumer_app.sh
+$ ./$DEMOPATH/stop_consumer_app.sh
 ```
 
-### See Topic Messages
+### Topic Messages
 
 In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
 
 ```bash
-$ ./scripts/listen_wikipedia.parsed.sh
+$ ./$DEMOPATH/listen_wikipedia.parsed.sh
 ```
 
 In a different terminal, watch the SMT failed messages (poison pill routing) from the `wikipedia.failed` topic:
 
 ```bash
-$ ./scripts/listen_wikipedia.failed.sh
+$ ./$DEMOPATH/listen_wikipedia.failed.sh
 ```
 
 
-### Teardown and stopping
+### Teardown
 Stop and destroy all components and clear all volumes from Docker.
 
 ```bash
-$ ./scripts/reset_demo.sh
+$ ./$DEMOPATH/reset_demo.sh
 ```
-
