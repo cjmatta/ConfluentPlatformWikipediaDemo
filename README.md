@@ -36,10 +36,7 @@ $ git submodule update
 
 2. Increase the memory available to Docker. Default is 2GB, increase to at least 6GB.
 
-
-### Running the Demo
-
-1. Run `make clean all` to build the IRC connector and the transformer that will parse the Wikipedia edit messages to data. These are saved to `connect-plugins` path, which is a shared volume to the `connect` docker container
+3. Run `make clean all` to build the IRC connector and the transformer that will parse the Wikipedia edit messages to data. These are saved to `connect-plugins` path, which is a shared volume to the `connect` docker container
 
 ```bash
 $ make clean all
@@ -47,55 +44,59 @@ $ make clean all
 $ ls connect-plugins
 ```
 
-2. Start Docker Compose. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready.
+### Running Docker
+
+1. Start Docker Compose. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready.
 
 ```bash
 $ docker-compose up -d
 ```
 
-3. Wait till Confluent Control Center is running fully.  You can check when it's ready when the logs show the following event
+2. Wait till Confluent Control Center is running fully.  You can check when it's ready when the logs show the following event
 
 ```bash
 $ docker-compose logs -f control-center | grep -e HTTP
 control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficServerConnector@26a529dc{HTTP/1.1}{0.0.0.0:9021} (org.eclipse.jetty.server.NetworkTrafficServerConnector)
 ```
 
-4. Now you must decide whether you want to run data straight through Kafka from Wikipedia IRC to Elasticsearch connectors without KSQL or with KSQL.
-If you want to run traffic straight from Wikipedia IRC to Elasticsearch *without KSQL*, then run this script to setup the connectors:
+### Running the Demo
+
+Now you must decide whether you want to run data straight through Kafka from Wikipedia IRC to Elasticsearch connectors without KSQL or with KSQL.
+
+1. If you want to run traffic straight from Wikipedia IRC to Elasticsearch *without KSQL*, then follow this step to setup the connectors, which will use Schema Registry and Avro.
 
 ```bash
 $ ./scripts_no_app/setup.sh
 ```
 
-5. If you want to run traffic from Wikipedia IRC *through KSQL* to Elasticsearch, then follow these steps, assuming you skipped above.
+2. On the other hand, if you want to run traffic from Wikipedia IRC *through KSQL* to Elasticsearch, then follow these steps to setup the connectors, which will use Json instead of Avro because KSQL does not support Avro with Schema Registry at this time.
 
-(a) Setup the connectors
+2a. Setup connectors
 
 ```bash
 $ ./scripts_ksql_app/setup.sh
 ```
 
-(b) Start KSQL
+2b. Start KSQL
 
 ```bash
 $ docker-compose exec ksql-cli ksql-cli local --bootstrap-server kafka:9092 --properties-file /tmp/ksqlproperties
 ```
 
-(c) Run saved KSQL commands which generates an output topic that feeds into the Elasticsearch sink connector.
+2c. Run saved KSQL commands which generates an output topic that feeds into the Elasticsearch sink connector.
 
 ```bash
 ksql> run script '/tmp/ksqlcommands';
 ```
 
-(d) Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
+2d. Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
 
-6. Open Kibana [http://localhost:5601/](http://localhost:5601/).
+3. Open Kibana [http://localhost:5601/](http://localhost:5601/).
 
-7. Navigate to "Management --> Saved Objects" and click `Import`. Then choose of these two options:
+4. Navigate to "Management --> Saved Objects" and click `Import`. Then choose of these two options:
 
-(a) If you are running traffic straight from Wikipedia IRC to Elasticsearch without KSQL, then load the `scripts_no_app/kibana_dash.json` file
-
-(b) If you are running traffic from Wikipedia IRC through KSQL to Elasticsearch, then load the `scripts_ksql_app/kibana_dash.json` file
+* If you are running traffic straight from Wikipedia IRC to Elasticsearch _without KSQL_, then load the `scripts_no_app/kibana_dash.json` file
+* If you are running traffic from Wikipedia IRC _through KSQL_ to Elasticsearch, then load the `scripts_ksql_app/kibana_dash.json` file
 
 8. Click "Yes, overwrite all".
 
