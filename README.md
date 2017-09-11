@@ -1,18 +1,19 @@
 ### Confluent Platform Wikipedia Demo
-Demo streaming pipeline built around the Confluent platform, uses the following:
 
-* [Kafka Connect](http://docs.confluent.io/3.1.1/connect/index.html)
-* [Kafka Streams](http://docs.confluent.io/3.1.1/streams/index.html)
-* [Confluent Schema Registry](http://docs.confluent.io/3.1.1/schema-registry/docs/index.html)
-* Conflulent Control Center
-* [kafka-connect-irc source connector](https://github.com/cjmatta/kafka-connect-irc)
-* [kafka-connect-elasticsearch sink connectors](http://docs.confluent.io/3.1.1/connect/connect-elasticsearch/docs/elasticsearch_connector.html)
-* [Elasticsearch](https://www.elastic.co/products/elasticsearch)
-* [Kibana](https://www.elastic.co/products/kibana)
-
-This demo connects to the Wikimedia Foundation's IRC channels #en.wikipedia and #en.wiktionary and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Connect Single Message Transform: [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
+This demo is a streaming pipeline using Apache Kafka. It connects to the Wikimedia Foundation's IRC channels (e.g. #en.wikipedia, #en.wiktionary) and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Connect Single Message Transform: [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
 
 ![image](drawing.png)
+
+Components:
+* [Confluent Control Center](http://docs.confluent.io/current/control-center/docs/index.html)
+* [Kafka Connect](http://docs.confluent.io/current/connect/index.html)
+* [Kafka Streams](http://docs.confluent.io/current/streams/index.html)
+* [KSQL](https://github.com/confluentinc/ksql)
+* [Confluent Schema Registry](http://docs.confluent.io/current/schema-registry/docs/index.html)
+* [kafka-connect-irc source connector](https://github.com/cjmatta/kafka-connect-irc)
+* [kafka-connect-elasticsearch sink connector](http://docs.confluent.io/current/connect/connect-elasticsearch/docs/elasticsearch_connector.html)
+* [Elasticsearch](https://www.elastic.co/products/elasticsearch)
+* [Kibana](https://www.elastic.co/products/kibana)
 
 ### Installation
 
@@ -59,43 +60,40 @@ $ docker-compose logs -f control-center | grep -e HTTP
 control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficServerConnector@26a529dc{HTTP/1.1}{0.0.0.0:9021} (org.eclipse.jetty.server.NetworkTrafficServerConnector)
 ```
 
-4. Run a bash script that sets up Kafka connectors and Elasticsearch and Kibana. Choose one of these two options:
-
-(a) If you want to run traffic straight from Wikipedia IRC to Elasticsearch, then run this script:
+4. Now you must decide whether you want to run data straight through Kafka from Wikipedia IRC to Elasticsearch connectors without KSQL or with KSQL.
+If you want to run traffic straight from Wikipedia IRC to Elasticsearch, then run this script to setup the connectors:
 
 ```bash
 $ ./scripts_no_app/setup.sh
 ```
 
-(b) If you want to run traffic from Wikipedia IRC through KSQL to Elasticsearch, then run this script:
+5. If you want to run traffic from Wikipedia IRC through KSQL to Elasticsearch, then follow these steps (only if you skipped the step above).
+
+(a) Setup the connectors
 
 ```bash
 $ ./scripts_ksql_app/sink_from_ksql/setup.sh
 ```
 
-5. If you went with option (b) because you want to demo KSQL, then you need to run KSQL specifically as
-follows, which generates an output topic that feeds into the Elasticsearch sink connector.
-If you went with option (a), you can skip this step.
-
-5a. Start KSQL
+(b) Start KSQL
 
 ```bash
 $ docker-compose exec ksql-cli ksql-cli local --bootstrap-server kafka:9092 --properties-file /tmp/ksqlproperties
 ```
 
-5b. Run saved KSQL commands.
+(c) Run saved KSQL commands which generates an output topic that feeds into the Elasticsearch sink connector.
 
 ```bash
 ksql> run script '/tmp/ksqlcommands';
 ```
 
-5c. Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
+(d) Leave KSQL application open for the duration of the demo to keep Kafka clients running. If you close KSQL, data processing will stop.
 
 6. Open Kibana [http://localhost:5601/](http://localhost:5601/).
 
 7. Navigate to "Management --> Saved Objects" and click `Import`. Then choose of these two options:
 
-(a) If you are running traffic straight from Wikipedia IRC to Elasticsearch without KSQL, then load the `kibana_dash.json` file
+(a) If you are running traffic straight from Wikipedia IRC to Elasticsearch without KSQL, then load the `scripts_no_app/kibana_dash.json` file
 
 (b) If you are running traffic from Wikipedia IRC through KSQL to Elasticsearch, then load the `scripts_ksql_app/kibana_dash.json` file
 

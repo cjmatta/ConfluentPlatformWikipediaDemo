@@ -6,7 +6,7 @@ curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName
 #curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka Raleigh"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X get http://localhost:9021/2.0/clusters/kafka/ | awk -v FS="(clusterId\":\"|\",\"displayName)" '{print $2}' )
 
 echo -e "\nStart streaming from IRC, source connector:"
-./scripts_no_app/submit_wikipedia_irc_config.sh
+./scripts_ksql_app/submit_wikipedia_irc_config.sh
 
 echo -e "\nTell Elasticsearch what the data looks like:"
 ./scripts_ksql_app/set_elasticsearch_mapping.sh
