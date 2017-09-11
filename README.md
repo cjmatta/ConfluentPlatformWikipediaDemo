@@ -61,18 +61,18 @@ control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficSe
 ```
 
 4. Now you must decide whether you want to run data straight through Kafka from Wikipedia IRC to Elasticsearch connectors without KSQL or with KSQL.
-If you want to run traffic straight from Wikipedia IRC to Elasticsearch, then run this script to setup the connectors:
+If you want to run traffic straight from Wikipedia IRC to Elasticsearch *without KSQL*, then run this script to setup the connectors:
 
 ```bash
 $ ./scripts_no_app/setup.sh
 ```
 
-5. If you want to run traffic from Wikipedia IRC through KSQL to Elasticsearch, then follow these steps (only if you skipped the step above).
+5. If you want to run traffic from Wikipedia IRC *through KSQL* to Elasticsearch, then follow these steps, assuming you skipped above.
 
 (a) Setup the connectors
 
 ```bash
-$ ./scripts_ksql_app/sink_from_ksql/setup.sh
+$ ./scripts_ksql_app/setup.sh
 ```
 
 (b) Start KSQL
