@@ -2,11 +2,12 @@
 
 # Script to build the kafka-connect-irc connector and move them to the plugin path directory
 export PLUGINPATH:="connect-plugins"
+export INTERCEPTORPATH:="monitoring-interceptors"
 
-all: install irc transform
+all: install monitoringinterceptors irc transform
 
 install:
-	if [ ! -d $(PLUGINPATH) ]; then mkdir $(PLUGINPATH); fi
+	if [[ ! -d $(PLUGINPATH) ]]; then mkdir $(PLUGINPATH); fi
 
 irc:
 	make install
@@ -19,4 +20,5 @@ transform:
 	cp -R kafka-connect-transform-wikiedit/target/WikiEditTransformation-3.3.0.jar $(PLUGINPATH)
 
 clean:
-	rm -fr $(PLUGINPATH)
+	rm -fr $(PLUGINPATH)/kafka-connect-irc
+	rm -fr $(PLUGINPATH)/WikiEditTransformation-3.3.0.jar
