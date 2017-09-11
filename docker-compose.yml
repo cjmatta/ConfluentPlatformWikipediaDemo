@@ -84,8 +84,8 @@ services:
     ports:
       - "5601:5601"
   control-center:
-    #image: confluentinc/cp-enterprise-control-center:3.3.1-alpha2
-    image: confluentinc/cp-enterprise-control-center:3.3.0
+    image: confluentinc/cp-enterprise-control-center:3.3.1-alpha2
+    #image: confluentinc/cp-enterprise-control-center:3.3.0
     restart: always
     depends_on:
       - zookeeper
