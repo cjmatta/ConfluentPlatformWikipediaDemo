@@ -6,7 +6,7 @@ export PLUGINPATH:="connect-plugins"
 all: install irc transform
 
 install:
-	if [ ! -d $(PLUGINPATH) ]; then mkdir $(PLUGINPATH); fi
+	if [[ ! -d $(PLUGINPATH) ]]; then mkdir $(PLUGINPATH); fi
 
 irc:
 	make install
@@ -19,4 +19,5 @@ transform:
 	cp -R kafka-connect-transform-wikiedit/target/WikiEditTransformation-3.3.0.jar $(PLUGINPATH)
 
 clean:
-	rm -fr $(PLUGINPATH)
+	rm -fr $(PLUGINPATH)/kafka-connect-irc
+	rm -fr $(PLUGINPATH)/WikiEditTransformation-3.3.0.jar
