@@ -1,4 +1,14 @@
-### Confluent Platform Wikipedia Demo
+**Table of Contents**
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Docker](#docker)
+- [Execution](#execution)
+- [Slow consumers](#slow-consumers)
+- [Topic messages](#topic-messages)
+- [Teardown](#teardown)
+
+### Overview
 
 This demo is a streaming pipeline using Apache Kafka. It connects to the Wikimedia Foundation's IRC channels (e.g. #en.wikipedia, #en.wiktionary) and streams the edits happening to Kafka via [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc). The raw messages are transformed using a Kafka Connect Single Message Transform: [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) and the parsed messages are materialized into Elasticsearch for analysis by Kibana.
 
@@ -44,7 +54,7 @@ $ make clean all
 $ ls connect-plugins
 ```
 
-### Running Docker
+### Docker
 
 1. Start Docker Compose. It will take about 2 minutes for all containers to start and for Confluent Control Center GUI to be ready.
 
@@ -59,7 +69,7 @@ $ docker-compose logs -f control-center | grep -e HTTP
 control-center_1       | [2017-09-06 16:37:33,133] INFO Started NetworkTrafficServerConnector@26a529dc{HTTP/1.1}{0.0.0.0:9021} (org.eclipse.jetty.server.NetworkTrafficServerConnector)
 ```
 
-### Running the Demo
+### Execution
 
 Now you must decide whether you want to run data straight through Kafka from Wikipedia IRC to Elasticsearch connectors without KSQL or with KSQL.
 
@@ -137,7 +147,7 @@ $ ./scripts_no_app/throttle_consumer.sh 1 delete
 $ ./scripts_no_app/stop_consumer_app.sh
 ```
 
-### See Topic Messages
+### Topic Messages
 
 In a different terminal, watch the live messages from the `wikipedia.parsed` topic:
 
@@ -153,7 +163,7 @@ $ ./scripts_no_app/listen_wikipedia.failed.sh
 ```
 
 
-### Teardown and stopping
+### Teardown
 Stop and destroy all components and clear all volumes from Docker.
 
 ```bash
