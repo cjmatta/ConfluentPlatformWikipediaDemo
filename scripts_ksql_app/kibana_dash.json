@@ -63,7 +63,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Average byte change",
-      "visState": "{\"type\":\"timelion\",\"title\":\"Average byte change\",\"params\":{\"expression\":\".es(metric='avg:bytechange').color(\\\"#c6c6c6\\\")\",\"interval\":\"auto\"}}",
+      "visState": "{\"type\":\"timelion\",\"title\":\"Average byte change\",\"params\":{\"expression\":\".es(metric='avg:BYTECHANGE').color(\\\"#c6c6c6\\\")\",\"interval\":\"auto\"}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -91,7 +91,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Percentage of edits that are bots",
-      "visState": "{\"title\":\"Percentage of edits that are bots\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('isbot:true').divide(.es()).multiply(100).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
+      "visState": "{\"title\":\"Percentage of edits that are bots\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('ISBOT:true').divide(.es()).multiply(100).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -105,7 +105,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Percentage of edits that are minor",
-      "visState": "{\"title\":\"Percentage of edits that are minor\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('isminor:true').divide(.es()).multiply(100).color(#ea7272).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
+      "visState": "{\"title\":\"Percentage of edits that are minor\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('ISMINOR:true').divide(.es()).multiply(100).color(#ea7272).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -119,7 +119,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Percentage of edits that are unpatrolled",
-      "visState": "{\"title\":\"Percentage of edits that are unpatrolled\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('isunpatrolled:true').divide(.es()).multiply(100).color(#76cfd5).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
+      "visState": "{\"title\":\"Percentage of edits that are unpatrolled\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('ISUNPATROLLED:true').divide(.es()).multiply(100).color(#76cfd5).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -133,7 +133,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Percentage of edits that are new",
-      "visState": "{\"title\":\"Percentage of edits that are new\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('isnew:true').divide(.es()).multiply(100).color(#72d586).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
+      "visState": "{\"title\":\"Percentage of edits that are new\",\"type\":\"timelion\",\"params\":{\"expression\":\".es('ISNEW:true').divide(.es()).multiply(100).color(#72d586).yaxis(max=100)\",\"interval\":\"auto\"},\"aggs\":[],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
