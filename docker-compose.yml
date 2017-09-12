@@ -70,20 +70,24 @@ services:
       CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-3.3.0.jar
   elasticsearch:
-    image: library/elasticsearch:latest
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.0
     restart: always
     depends_on:
       - connect
     ports:
       - "9200:9200"
       - "9300:9300"
+    environment:
+      xpack.security.enabled: "false"
   kibana:
-    image: library/kibana:latest
+    image: docker.elastic.co/kibana/kibana:5.5.2
     restart: always
     depends_on:
       - elasticsearch
     ports:
       - "5601:5601"
+    environment:
+      xpack.security.enabled: "false"
   control-center:
     image: confluentinc/cp-enterprise-control-center:3.3.1-alpha2
     #image: confluentinc/cp-enterprise-control-center:3.3.0
@@ -141,10 +145,12 @@ services:
     ports:
       - "7073:7073"
   ksql-cli:
-    image: "confluentinc/ksql-cli:latest"
+    image: "confluentinc/ksql-cli:0.1-pre10"
     hostname: ksql-cli
     depends_on:
       - kafka
+    ports:
+      - 9098:9098
     volumes:
       - $PWD/monitoring-interceptors/monitoring-interceptors-3.3.0.jar:/usr/share/java/ksql-cli/monitoring-interceptors-3.3.0.jar
       - $PWD/ksqlproperties:/tmp/ksqlproperties
