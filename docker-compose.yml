@@ -33,6 +33,7 @@ services:
       CONFLUENT_METRICS_REPORTER_MAX_REQUEST_SIZE: 10485760
       KAFKA_DELETE_TOPIC_ENABLE: "true"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
   connect:
     image: confluentinc/cp-kafka-connect:3.3.0
     restart: always
