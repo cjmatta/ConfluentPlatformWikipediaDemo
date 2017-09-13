@@ -120,7 +120,7 @@ ksql> run script '/tmp/ksqlcommands';
 
 9. Navigate to the Dashboard tab (speedometer icon) and open your new dashboard.
 
-10. Open the Control Center GUI at [http://localhost:9021](http://localhost:9021) and see the message delivery status, consumer groups, connectors.
+10. Use Google Chrome to view the Control Center GUI at [http://localhost:9021](http://localhost:9021) and see the message delivery status, consumer groups, connectors.
 
 
 ### Slow Consumers
