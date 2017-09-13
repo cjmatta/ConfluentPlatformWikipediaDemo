@@ -9,3 +9,5 @@ CREATE STREAM wikipedia AS SELECT extractJsonField(payload, '$.wikipage') AS wik
 CREATE STREAM wikipedianobot WITH (PARTITIONS=6) AS SELECT * FROM wikipedia WHERE isbot <> 'true';
 
 CREATE STREAM wikipediabot WITH (PARTITIONS=6) AS SELECT * FROM wikipedia WHERE isbot = 'true';
+
+CREATE TABLE en_wikipedia_gt_1 as select username,wikipage, count(*) from wikipedia window tumbling (size 600 second) group by username, wikipage having count(*) > 1 and isbot <> 'true' and channel = '#en.wikipedia';
